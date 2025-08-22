@@ -43,7 +43,8 @@ namespace MedanoClinicBE.Controllers
                     Email = dto.Email,
                     DisplayName = dto.DisplayName,
                     DateOfBirth = dto.DateOfBirth,
-                    Gender = dto.Gender
+                    Gender = dto.Gender,
+                    CreatedAt = DateTime.UtcNow
                 };
                 var res = await _userMgr.CreateAsync(user, dto.Password);
                 if (!res.Succeeded) return BadRequest(res.Errors);
@@ -67,10 +68,12 @@ namespace MedanoClinicBE.Controllers
                 return Unauthorized("Invalid credentials");
 
             var roles = await _userMgr.GetRolesAsync(user);
+            var userRole = roles.FirstOrDefault() ?? "Client"; // Default to Client if no role found
+            
             var claims = new List<Claim> {
                 new(JwtRegisteredClaimNames.Sub, user.Id),
                 new(JwtRegisteredClaimNames.Email, user.Email),
-                new(ClaimTypes.Role, roles.First())
+                new(ClaimTypes.Role, userRole)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Secret));
@@ -87,6 +90,8 @@ namespace MedanoClinicBE.Controllers
 
             return new AuthResponseDto
             {
+                Email = user.Email,
+                Role = userRole,
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiry = expires
             };

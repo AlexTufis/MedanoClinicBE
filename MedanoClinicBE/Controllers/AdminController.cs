@@ -1,0 +1,48 @@
+using MedanoClinicBE.DTOs;
+using MedanoClinicBE.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace MedanoClinicBE.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    public class AdminController : ControllerBase
+    {
+        private readonly IAdminService _adminService;
+
+        public AdminController(IAdminService adminService)
+        {
+            _adminService = adminService;
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<ActionResult<AdminDashboardDto>> GetDashboardStatistics()
+        {
+            try
+            {
+                var statistics = await _adminService.GetDashboardStatisticsAsync();
+                return Ok(statistics);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("users")]
+        public async Task<ActionResult<List<UserDto>>> GetAllUsers()
+        {
+            try
+            {
+                var users = await _adminService.GetAllUsersAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+    }
+}

@@ -17,6 +17,7 @@ namespace MedanoClinicBE.Models
 
         public DateTime? DateOfBirth { get; set; }
         public Gender? Gender { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 
 }
