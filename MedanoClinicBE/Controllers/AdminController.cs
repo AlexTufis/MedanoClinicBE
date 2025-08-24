@@ -44,5 +44,19 @@ namespace MedanoClinicBE.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+        [HttpGet("getAppointments")]
+        public async Task<ActionResult<List<AppointmentResponseDto>>> GetAppointments()
+        {
+            try
+            {
+                var appointments = await _adminService.GetAllAppointmentsAsync();
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
     }
 }

@@ -93,7 +93,7 @@ namespace MedanoClinicBE.Repositories
                 _ => "scheduled"
             };
 
-            return new AppointmentResponseDto
+            var appointmentDto = new AppointmentResponseDto
             {
                 Id = createdAppointment.Id.ToString(),
                 ClientId = createdAppointment.PatientId,
@@ -108,6 +108,8 @@ namespace MedanoClinicBE.Repositories
                 Notes = createdAppointment.Notes,
                 CreatedAt = createdAppointment.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
             };
+
+            return appointmentDto;
         }
 
         public async Task<List<AppointmentResponseDto>> GetClientAppointmentsAsync(string clientId)
@@ -117,6 +119,50 @@ namespace MedanoClinicBE.Repositories
                 .Include(a => a.Doctor)
                 .ThenInclude(d => d.User)
                 .Where(a => a.PatientId == clientId)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ToListAsync();
+
+            var appointmentDtos = new List<AppointmentResponseDto>();
+
+            foreach (var appointment in appointments)
+            {
+                // Convert status enum to lowercase string to match frontend
+                var statusString = appointment.Status switch
+                {
+                    AppointmentStatus.Scheduled => "scheduled",
+                    AppointmentStatus.Completed => "completed",
+                    AppointmentStatus.Cancelled => "cancelled",
+                    AppointmentStatus.NoShow => "no-show",
+                    AppointmentStatus.InProgress => "scheduled", // Map InProgress to scheduled for frontend
+                    _ => "scheduled"
+                };
+
+                appointmentDtos.Add(new AppointmentResponseDto
+                {
+                    Id = appointment.Id.ToString(),
+                    ClientId = appointment.PatientId,
+                    ClientName = $"{appointment.Patient.FirstName} {appointment.Patient.LastName}",
+                    DoctorId = appointment.DoctorId.ToString(),
+                    DoctorName = $"{appointment.Doctor.User.FirstName} {appointment.Doctor.User.LastName}",
+                    DoctorSpecialization = appointment.Doctor.Specialization,
+                    AppointmentDate = appointment.AppointmentDate.ToString("yyyy-MM-dd"),
+                    AppointmentTime = appointment.AppointmentTime.ToString(@"hh\:mm"),
+                    Status = statusString,
+                    Reason = appointment.Reason,
+                    Notes = appointment.Notes,
+                    CreatedAt = appointment.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                });
+            }
+
+            return appointmentDtos;
+        }
+
+        public async Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync()
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
                 .OrderByDescending(a => a.AppointmentDate)
                 .ToListAsync();
 

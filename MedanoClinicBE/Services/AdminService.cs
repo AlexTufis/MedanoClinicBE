@@ -58,5 +58,10 @@ namespace MedanoClinicBE.Services
         {
             return await _userRepository.GetAllUsersAsync();
         }
+
+        public async Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync()
+        {
+            return await _appointmentRepository.GetAllAppointmentsAsync();
+        }
     }
 }

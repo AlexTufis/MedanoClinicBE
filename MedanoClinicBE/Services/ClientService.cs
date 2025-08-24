@@ -9,12 +9,18 @@ namespace MedanoClinicBE.Services
         private readonly IDoctorRepository _doctorRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IJobService _jobService;
 
-        public ClientService(IDoctorRepository doctorRepository, IAppointmentRepository appointmentRepository, IReviewRepository reviewRepository)
+        public ClientService(
+            IDoctorRepository doctorRepository, 
+            IAppointmentRepository appointmentRepository, 
+            IReviewRepository reviewRepository,
+            IJobService jobService)
         {
             _doctorRepository = doctorRepository;
             _appointmentRepository = appointmentRepository;
             _reviewRepository = reviewRepository;
+            _jobService = jobService;
         }
 
         public async Task<List<DoctorDto>> GetDoctorsAsync()
@@ -29,7 +35,16 @@ namespace MedanoClinicBE.Services
 
         public async Task<AppointmentResponseDto> CreateAppointmentAsync(CreateAppointmentDto dto, string clientId)
         {
-            return await _appointmentRepository.CreateAppointmentAsync(dto, clientId);
+            // Create the appointment first
+            var appointment = await _appointmentRepository.CreateAppointmentAsync(dto, clientId);
+            
+            // Use Hangfire to send appointment creation emails asynchronously
+            _jobService.SendAppointmentCreatedEmailJob(appointment);
+            
+            // Schedule reminder (1 hour before appointment)
+            _jobService.ScheduleAppointmentReminder(appointment);
+            
+            return appointment;
         }
 
         public async Task<ReviewDto> CreateReviewAsync(CreateReviewDto dto, string clientId)

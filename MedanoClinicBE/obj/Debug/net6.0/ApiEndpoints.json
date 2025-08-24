@@ -21,6 +21,26 @@
   },
   {
     "ContainingType": "MedanoClinicBE.Controllers.AdminController",
+    "Method": "GetAppointments",
+    "RelativePath": "api/Admin/getAppointments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentResponseDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.AdminController",
     "Method": "GetAllUsers",
     "RelativePath": "api/Admin/users",
     "HttpMethod": "GET",
@@ -192,5 +212,41 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.NotificationsController",
+    "Method": "GetNotifications",
+    "RelativePath": "api/Notifications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.NotificationDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.NotificationsController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/Notifications/{id}/read",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

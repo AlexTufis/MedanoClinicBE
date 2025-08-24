@@ -5,11 +5,15 @@ using MedanoClinicBE.Repositories;
 using MedanoClinicBE.Repositories.Interfaces;
 using MedanoClinicBE.Services;
 using MedanoClinicBE.Services.Interfaces;
+using MedanoClinicBE.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Hangfire;
+using Hangfire.SqlServer;
+using Hangfire.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,7 +57,31 @@ builder.Services.AddAuthentication(opt =>
     };
 });
 
-// 3. Repository and Service Registration
+// 3. Email Settings Configuration
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// 4. Hangfire Configuration
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        DisableGlobalLocks = true
+    }));
+
+// Add Hangfire server
+builder.Services.AddHangfireServer(options =>
+{
+    options.SchedulePollingInterval = TimeSpan.FromSeconds(30);
+    options.Queues = new[] { "notifications", "default" };
+});
+
+// 5. Repository and Service Registration
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
@@ -61,7 +89,12 @@ builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 
-// 4. CORS Configuration
+// 6. Notification Services
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IJobService, JobService>();
+
+// 7. CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -79,7 +112,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 5. Enhanced Database Initialization
+// 8. Enhanced Database Initialization
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -123,7 +156,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
     
-    // 6. Seed Roles
+    // 9. Seed Roles
     try
     {
         var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -285,6 +318,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    // Add Hangfire Dashboard for development (allows anonymous access in dev)
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        DashboardTitle = "MedanoClinic Job Dashboard"
+        // In development, dashboard is accessible to localhost by default
+    });
 }
 
 app.UseHttpsRedirection();

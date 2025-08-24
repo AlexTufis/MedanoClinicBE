@@ -6,5 +6,6 @@ namespace MedanoClinicBE.Services.Interfaces
     {
         Task<AdminDashboardDto> GetDashboardStatisticsAsync();
         Task<List<UserDto>> GetAllUsersAsync();
+        Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync();
     }
 }
