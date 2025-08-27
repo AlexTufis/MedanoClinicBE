@@ -48,8 +48,8 @@ namespace MedanoClinicBE.Repositories
                 var roles = await _userManager.GetRolesAsync(user);
                 var userRole = roles.FirstOrDefault() ?? "Client";
 
-                // Only include Admin and Client users as per frontend interface
-                if (userRole == "Admin" || userRole == "Client")
+                // Include Admin, Client, and Doctor users
+                if (userRole == "Admin" || userRole == "Client" || userRole == "Doctor")
                 {
                     userDtos.Add(new UserDto
                     {

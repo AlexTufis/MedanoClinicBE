@@ -9,5 +9,9 @@ namespace MedanoClinicBE.DTOs
         public string Email { get; set; }
         public string? Phone { get; set; }
         public bool IsActive { get; set; }
+        
+        // Review Information
+        public double AverageRating { get; set; }
+        public int TotalReviews { get; set; }
     }
 }

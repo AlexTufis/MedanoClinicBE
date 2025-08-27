@@ -14,6 +14,7 @@ namespace MedanoClinicBE.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<AppointmentHour> AppointmentHours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -57,6 +58,18 @@ namespace MedanoClinicBE.Data
                 .WithMany()
                 .HasForeignKey(r => r.AppointmentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure AppointmentHour relationships
+            builder.Entity<AppointmentHour>()
+                .HasOne(ah => ah.Doctor)
+                .WithMany()
+                .HasForeignKey(ah => ah.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Create unique index for DoctorId, Hour, DayOfWeek combination
+            builder.Entity<AppointmentHour>()
+                .HasIndex(ah => new { ah.DoctorId, ah.Hour, ah.DayOfWeek })
+                .IsUnique();
         }
     }
 }

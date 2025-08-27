@@ -200,5 +200,78 @@ namespace MedanoClinicBE.Repositories
 
             return appointmentDtos;
         }
+
+        public async Task<List<AppointmentResponseDto>> GetDoctorAppointmentsAsync(int doctorId)
+        {
+            var appointments = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
+                .Where(a => a.DoctorId == doctorId)
+                .OrderByDescending(a => a.AppointmentDate)
+                .ToListAsync();
+
+            var appointmentDtos = new List<AppointmentResponseDto>();
+
+            foreach (var appointment in appointments)
+            {
+                // Convert status enum to lowercase string to match frontend
+                var statusString = appointment.Status switch
+                {
+                    AppointmentStatus.Scheduled => "scheduled",
+                    AppointmentStatus.Completed => "completed",
+                    AppointmentStatus.Cancelled => "cancelled",
+                    AppointmentStatus.NoShow => "no-show",
+                    AppointmentStatus.InProgress => "scheduled", // Map InProgress to scheduled for frontend
+                    _ => "scheduled"
+                };
+
+                appointmentDtos.Add(new AppointmentResponseDto
+                {
+                    Id = appointment.Id.ToString(),
+                    ClientId = appointment.PatientId,
+                    ClientName = $"{appointment.Patient.FirstName} {appointment.Patient.LastName}",
+                    DoctorId = appointment.DoctorId.ToString(),
+                    DoctorName = $"{appointment.Doctor.User.FirstName} {appointment.Doctor.User.LastName}",
+                    DoctorSpecialization = appointment.Doctor.Specialization,
+                    AppointmentDate = appointment.AppointmentDate.ToString("yyyy-MM-dd"),
+                    AppointmentTime = appointment.AppointmentTime.ToString(@"hh\:mm"),
+                    Status = statusString,
+                    Reason = appointment.Reason,
+                    Notes = appointment.Notes,
+                    CreatedAt = appointment.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                });
+            }
+
+            return appointmentDtos;
+        }
+
+        public async Task<int> UpdatePastAppointmentsStatusAsync()
+        {
+            // Get current date and time for comparison
+            var currentDate = DateTime.Today;
+            var currentTime = DateTime.Now.TimeOfDay;
+
+            // Find appointments that are past their scheduled time and still scheduled
+            var pastAppointments = await _context.Appointments
+                .Where(a => a.Status == AppointmentStatus.Scheduled && 
+                           (a.AppointmentDate < currentDate || 
+                            (a.AppointmentDate == currentDate && a.AppointmentTime < currentTime)))
+                .ToListAsync();
+
+            if (pastAppointments.Any())
+            {
+                // Update all past appointments to Completed status
+                foreach (var appointment in pastAppointments)
+                {
+                    appointment.Status = AppointmentStatus.Completed;
+                    appointment.CompletedAt = DateTime.UtcNow;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            return pastAppointments.Count;
+        }
     }
 }

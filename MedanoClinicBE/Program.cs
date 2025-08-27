@@ -78,7 +78,7 @@ builder.Services.AddHangfire(configuration => configuration
 builder.Services.AddHangfireServer(options =>
 {
     options.SchedulePollingInterval = TimeSpan.FromSeconds(30);
-    options.Queues = new[] { "notifications", "default" };
+    options.Queues = new[] { "maintenance", "notifications", "default" };
 });
 
 // 5. Repository and Service Registration
@@ -86,15 +86,20 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IAppointmentHourRepository, AppointmentHourRepository>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IDoctorService, DoctorService>();
 
 // 6. Notification Services
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJobService, JobService>();
 
-// 7. CORS Configuration
+// 7. Hosted Services
+builder.Services.AddHostedService<HangfireJobSetupService>();
+
+// 8. CORS Configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -112,7 +117,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 8. Enhanced Database Initialization
+// 9. Enhanced Database Initialization
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -156,7 +161,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
     
-    // 9. Seed Roles
+    // 10. Seed Roles
     try
     {
         var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -173,6 +178,20 @@ using (var scope = app.Services.CreateScope())
     {
         logger.LogError(ex, "An error occurred while seeding roles.");
     }
+
+    // 11. Seed Default Appointment Hours
+    try
+    {
+        logger.LogInformation("Seeding default appointment hours...");
+        await AppointmentHourSeeder.SeedDefaultAppointmentHoursAsync(context);
+        logger.LogInformation("Default appointment hours seeded successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while seeding appointment hours.");
+    }
+
+    // Note: Recurring jobs are now set up by HangfireJobSetupService hosted service
 }
 
 // Helper method to ensure tables exist
@@ -225,6 +244,28 @@ static async Task EnsureTablesExist(ApplicationDbContext context, ILogger logger
                 CREATE INDEX [IX_Reviews_ClientId] ON [Reviews] ([ClientId]);
                 CREATE INDEX [IX_Reviews_DoctorId] ON [Reviews] ([DoctorId]);
                 CREATE INDEX [IX_Reviews_AppointmentId] ON [Reviews] ([AppointmentId]);
+            END
+        ");
+
+        await context.Database.ExecuteSqlRawAsync(@"
+            -- Check if AppointmentHours table exists, create if not
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='AppointmentHours' AND xtype='U')
+            BEGIN
+                CREATE TABLE [AppointmentHours] (
+                    [Id] int IDENTITY(1,1) NOT NULL,
+                    [DoctorId] int NOT NULL,
+                    [Hour] time NOT NULL,
+                    [DayOfWeek] int NOT NULL,
+                    [IsActive] bit NOT NULL DEFAULT 1,
+                    [CreatedAt] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+                    [UpdatedAt] datetime2 NULL,
+                    CONSTRAINT [PK_AppointmentHours] PRIMARY KEY ([Id]),
+                    CONSTRAINT [FK_AppointmentHours_Doctors_DoctorId] FOREIGN KEY ([DoctorId]) 
+                        REFERENCES [Doctors] ([Id]) ON DELETE NO ACTION
+                );
+                
+                CREATE INDEX [IX_AppointmentHours_DoctorId] ON [AppointmentHours] ([DoctorId]);
+                CREATE UNIQUE INDEX [IX_AppointmentHours_DoctorId_Hour_DayOfWeek] ON [AppointmentHours] ([DoctorId], [Hour], [DayOfWeek]);
             END
         ");
 

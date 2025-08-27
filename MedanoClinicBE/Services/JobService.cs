@@ -140,5 +140,31 @@ namespace MedanoClinicBE.Services
                 throw; // Re-throw to let Hangfire handle retries
             }
         }
+
+        [Queue("maintenance")]
+        public async Task ProcessPastAppointmentsStatusUpdateAsync()
+        {
+            try
+            {
+                _logger.LogInformation("Processing past appointments status update job");
+
+                // Update past appointments status to completed
+                var updatedCount = await _appointmentRepository.UpdatePastAppointmentsStatusAsync();
+
+                if (updatedCount > 0)
+                {
+                    _logger.LogInformation("Updated {Count} past appointments from scheduled to completed status", updatedCount);
+                }
+                else
+                {
+                    _logger.LogInformation("No past appointments found to update");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process past appointments status update");
+                throw; // Re-throw to let Hangfire handle retries
+            }
+        }
     }
 }

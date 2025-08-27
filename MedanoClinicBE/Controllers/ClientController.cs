@@ -119,5 +119,48 @@ namespace MedanoClinicBE.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+        // Appointment Hours Management Endpoints
+        [HttpGet("appointment-hours")]
+        public async Task<ActionResult<List<DoctorAppointmentHoursDto>>> GetAllDoctorsAppointmentHours()
+        {
+            try
+            {
+                var doctorsHours = await _clientService.GetAllDoctorsAppointmentHoursAsync();
+                return Ok(doctorsHours);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("appointment-hours/doctor/{doctorId}")]
+        public async Task<ActionResult<List<AppointmentHourDto>>> GetDoctorAppointmentHours(string doctorId)
+        {
+            try
+            {
+                var appointmentHours = await _clientService.GetDoctorAppointmentHoursAsync(doctorId);
+                return Ok(appointmentHours);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("appointment-hours/doctor/{doctorId}/day/{dayOfWeek}")]
+        public async Task<ActionResult<List<AppointmentHourDto>>> GetDoctorAppointmentHoursByDay(string doctorId, string dayOfWeek)
+        {
+            try
+            {
+                var appointmentHours = await _clientService.GetDoctorAppointmentHoursByDayAsync(doctorId, dayOfWeek);
+                return Ok(appointmentHours);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
     }
 }

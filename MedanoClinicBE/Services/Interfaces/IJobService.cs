@@ -12,5 +12,8 @@ namespace MedanoClinicBE.Services.Interfaces
         // New method for sending appointment creation emails
         void SendAppointmentCreatedEmailJob(AppointmentResponseDto appointment);
         Task ProcessAppointmentCreatedEmailAsync(string appointmentId);
+        
+        // New method for recurring appointment status updates
+        Task ProcessPastAppointmentsStatusUpdateAsync();
     }
 }

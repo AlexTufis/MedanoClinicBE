@@ -1,6 +1,99 @@
 [
   {
     "ContainingType": "MedanoClinicBE.Controllers.AdminController",
+    "Method": "GetAllDoctorsAppointmentHours",
+    "RelativePath": "api/Admin/appointment-hours",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.DoctorAppointmentHoursDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.AdminController",
+    "Method": "CreateAppointmentHour",
+    "RelativePath": "api/Admin/appointment-hours",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MedanoClinicBE.DTOs.CreateAppointmentHourDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MedanoClinicBE.DTOs.AppointmentHourDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.AdminController",
+    "Method": "UpdateAppointmentHour",
+    "RelativePath": "api/Admin/appointment-hours/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "MedanoClinicBE.DTOs.UpdateAppointmentHourDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MedanoClinicBE.DTOs.AppointmentHourDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.AdminController",
+    "Method": "DeleteAppointmentHour",
+    "RelativePath": "api/Admin/appointment-hours/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.AdminController",
     "Method": "GetDashboardStatistics",
     "RelativePath": "api/Admin/dashboard",
     "HttpMethod": "GET",
@@ -100,6 +193,83 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.ClientController",
+    "Method": "GetAllDoctorsAppointmentHours",
+    "RelativePath": "api/Client/appointment-hours",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.DoctorAppointmentHoursDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.ClientController",
+    "Method": "GetDoctorAppointmentHours",
+    "RelativePath": "api/Client/appointment-hours/doctor/{doctorId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentHourDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.ClientController",
+    "Method": "GetDoctorAppointmentHoursByDay",
+    "RelativePath": "api/Client/appointment-hours/doctor/{doctorId}/day/{dayOfWeek}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "dayOfWeek",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentHourDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "MedanoClinicBE.Controllers.ClientController",
@@ -212,6 +382,186 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetDoctorAppointments",
+    "RelativePath": "api/Doctor/{doctorId}/appointments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentResponseDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetDoctorReviews",
+    "RelativePath": "api/Doctor/{doctorId}/reviews",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "doctorId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.ReviewDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetDoctorAppointmentsByUserId",
+    "RelativePath": "api/Doctor/appointments-by-userid",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MedanoClinicBE.DTOs.DoctorIdRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentResponseDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetDoctors",
+    "RelativePath": "api/Doctor/doctors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.DoctorDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetMyAppointments",
+    "RelativePath": "api/Doctor/my-appointments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.AppointmentResponseDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetMyReviews",
+    "RelativePath": "api/Doctor/my-reviews",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.ReviewDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "GetDoctorReviewsByUserId",
+    "RelativePath": "api/Doctor/reviews-by-userid",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MedanoClinicBE.DTOs.DoctorIdRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MedanoClinicBE.DTOs.ReviewDto, MedanoClinicBE, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MedanoClinicBE.Controllers.DoctorController",
+    "Method": "UpdateUserRole",
+    "RelativePath": "api/Doctor/update-user-role",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "MedanoClinicBE.DTOs.UpdateUserRoleDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "MedanoClinicBE.Controllers.NotificationsController",

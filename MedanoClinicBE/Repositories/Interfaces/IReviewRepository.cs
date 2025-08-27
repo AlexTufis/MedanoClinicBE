@@ -6,5 +6,6 @@ namespace MedanoClinicBE.Repositories.Interfaces
     {
         Task<ReviewDto> CreateReviewAsync(CreateReviewDto dto, string clientId);
         Task<List<ReviewDto>> GetAllReviewsAsync();
+        Task<List<ReviewDto>> GetDoctorReviewsAsync(int doctorId);
     }
 }

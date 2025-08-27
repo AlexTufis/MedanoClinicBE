@@ -9,11 +9,16 @@ namespace MedanoClinicBE.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IAppointmentHourRepository _appointmentHourRepository;
 
-        public AdminService(IUserRepository userRepository, IAppointmentRepository appointmentRepository)
+        public AdminService(
+            IUserRepository userRepository, 
+            IAppointmentRepository appointmentRepository,
+            IAppointmentHourRepository appointmentHourRepository)
         {
             _userRepository = userRepository;
             _appointmentRepository = appointmentRepository;
+            _appointmentHourRepository = appointmentHourRepository;
         }
 
         public async Task<AdminDashboardDto> GetDashboardStatisticsAsync()
@@ -62,6 +67,29 @@ namespace MedanoClinicBE.Services
         public async Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync()
         {
             return await _appointmentRepository.GetAllAppointmentsAsync();
+        }
+
+        // Appointment Hours Management
+        public async Task<AppointmentHourDto> CreateAppointmentHourAsync(CreateAppointmentHourDto dto)
+        {
+            return await _appointmentHourRepository.CreateAppointmentHourAsync(dto);
+        }
+
+        public async Task<AppointmentHourDto> UpdateAppointmentHourAsync(string id, UpdateAppointmentHourDto dto)
+        {
+            var appointmentHourId = int.Parse(id);
+            return await _appointmentHourRepository.UpdateAppointmentHourAsync(appointmentHourId, dto);
+        }
+
+        public async Task<bool> DeleteAppointmentHourAsync(string id)
+        {
+            var appointmentHourId = int.Parse(id);
+            return await _appointmentHourRepository.DeleteAppointmentHourAsync(appointmentHourId);
+        }
+
+        public async Task<List<DoctorAppointmentHoursDto>> GetAllDoctorsAppointmentHoursAsync()
+        {
+            return await _appointmentHourRepository.GetAllDoctorsAppointmentHoursAsync();
         }
     }
 }

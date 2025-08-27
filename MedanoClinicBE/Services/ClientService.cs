@@ -9,17 +9,20 @@ namespace MedanoClinicBE.Services
         private readonly IDoctorRepository _doctorRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IReviewRepository _reviewRepository;
+        private readonly IAppointmentHourRepository _appointmentHourRepository;
         private readonly IJobService _jobService;
 
         public ClientService(
             IDoctorRepository doctorRepository, 
             IAppointmentRepository appointmentRepository, 
             IReviewRepository reviewRepository,
+            IAppointmentHourRepository appointmentHourRepository,
             IJobService jobService)
         {
             _doctorRepository = doctorRepository;
             _appointmentRepository = appointmentRepository;
             _reviewRepository = reviewRepository;
+            _appointmentHourRepository = appointmentHourRepository;
             _jobService = jobService;
         }
 
@@ -55,6 +58,25 @@ namespace MedanoClinicBE.Services
         public async Task<List<ReviewDto>> GetAllReviewsAsync()
         {
             return await _reviewRepository.GetAllReviewsAsync();
+        }
+
+        // Appointment Hours Management
+        public async Task<List<AppointmentHourDto>> GetDoctorAppointmentHoursAsync(string doctorId)
+        {
+            var id = int.Parse(doctorId);
+            return await _appointmentHourRepository.GetDoctorAppointmentHoursAsync(id);
+        }
+
+        public async Task<List<AppointmentHourDto>> GetDoctorAppointmentHoursByDayAsync(string doctorId, string dayOfWeek)
+        {
+            var id = int.Parse(doctorId);
+            var day = Enum.Parse<DayOfWeek>(dayOfWeek);
+            return await _appointmentHourRepository.GetDoctorAppointmentHoursByDayAsync(id, day);
+        }
+
+        public async Task<List<DoctorAppointmentHoursDto>> GetAllDoctorsAppointmentHoursAsync()
+        {
+            return await _appointmentHourRepository.GetAllDoctorsAppointmentHoursAsync();
         }
     }
 }

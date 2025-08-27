@@ -103,5 +103,35 @@ namespace MedanoClinicBE.Repositories
 
             return reviewDtos;
         }
+
+        public async Task<List<ReviewDto>> GetDoctorReviewsAsync(int doctorId)
+        {
+            var reviews = await _context.Reviews
+                .Include(r => r.Client)
+                .Include(r => r.Doctor)
+                .ThenInclude(d => d.User)
+                .Where(r => r.DoctorId == doctorId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            var reviewDtos = new List<ReviewDto>();
+
+            foreach (var review in reviews)
+            {
+                reviewDtos.Add(new ReviewDto
+                {
+                    Id = review.Id.ToString(),
+                    DoctorId = review.DoctorId.ToString(),
+                    ClientId = review.ClientId,
+                    ClientName = $"{review.Client.FirstName} {review.Client.LastName}",
+                    Rating = review.Rating,
+                    Comment = review.Comment,
+                    CreatedAt = review.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    AppointmentId = review.AppointmentId.ToString()
+                });
+            }
+
+            return reviewDtos;
+        }
     }
 }

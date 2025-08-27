@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MedanoClinicBE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d4d471bdad9d7b74e40a3ffea27fdf649dc87db")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66a418fe68a75becb6a97f0df80df66110e77334")]
 [assembly: System.Reflection.AssemblyProductAttribute("MedanoClinicBE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MedanoClinicBE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
