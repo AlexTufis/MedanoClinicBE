@@ -15,5 +15,6 @@ namespace MedanoClinicBE.DTOs
         public string Role { get; set; }
         public string CreatedAt { get; set; } // String format for frontend compatibility
         public bool IsActive { get; set; }
+        public List<MedicalReportDto> MedicalReports { get; set; } = new List<MedicalReportDto>();
     }
 }

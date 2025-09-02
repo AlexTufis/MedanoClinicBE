@@ -10,15 +10,18 @@ namespace MedanoClinicBE.Services
         private readonly IUserRepository _userRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IAppointmentHourRepository _appointmentHourRepository;
+        private readonly IMedicalReportRepository _medicalReportRepository;
 
         public AdminService(
             IUserRepository userRepository, 
             IAppointmentRepository appointmentRepository,
-            IAppointmentHourRepository appointmentHourRepository)
+            IAppointmentHourRepository appointmentHourRepository,
+            IMedicalReportRepository medicalReportRepository)
         {
             _userRepository = userRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentHourRepository = appointmentHourRepository;
+            _medicalReportRepository = medicalReportRepository;
         }
 
         public async Task<AdminDashboardDto> GetDashboardStatisticsAsync()
@@ -61,7 +64,23 @@ namespace MedanoClinicBE.Services
 
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
-            return await _userRepository.GetAllUsersAsync();
+            var users = await _userRepository.GetAllUsersAsync();
+            
+            // For each user, get their medical reports
+            foreach (var user in users)
+            {
+                try
+                {
+                    user.MedicalReports = await _medicalReportRepository.GetMedicalReportsByPatientAsync(user.Id);
+                }
+                catch
+                {
+                    // If there's an error getting medical reports for a user, just leave the list empty
+                    user.MedicalReports = new List<MedicalReportDto>();
+                }
+            }
+            
+            return users;
         }
 
         public async Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync()
