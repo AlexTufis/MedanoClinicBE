@@ -8,7 +8,7 @@ namespace MedanoClinicBE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Client")]
+    [Authorize(Roles = "Client,Admin")]
     public class ClientController : ControllerBase
     {
         private readonly IClientService _clientService;

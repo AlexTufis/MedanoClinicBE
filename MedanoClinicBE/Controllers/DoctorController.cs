@@ -202,5 +202,186 @@ namespace MedanoClinicBE.Controllers
                 return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
+
+        // Medical Report Endpoints
+        [HttpPost("medical-reports")]
+        [Authorize(Roles = "Doctor")] // Only doctors can create medical reports
+        public async Task<ActionResult<MedicalReportDto>> CreateMedicalReport(CreateMedicalReportDto dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Get the current doctor's user ID from the JWT token
+                var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(doctorUserId))
+                {
+                    return Unauthorized("Unable to identify user");
+                }
+
+                var medicalReport = await _doctorService.CreateMedicalReportAsync(dto, doctorUserId);
+                return CreatedAtAction(nameof(GetMedicalReportById), new { reportId = medicalReport.Id }, medicalReport);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while creating medical report");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpPut("medical-reports/{reportId}")]
+        [Authorize(Roles = "Doctor")] // Only doctors can update medical reports
+        public async Task<ActionResult<MedicalReportDto>> UpdateMedicalReport(string reportId, UpdateMedicalReportDto dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                // Get the current doctor's user ID from the JWT token
+                var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(doctorUserId))
+                {
+                    return Unauthorized("Unable to identify user");
+                }
+
+                var updatedReport = await _doctorService.UpdateMedicalReportAsync(reportId, dto, doctorUserId);
+                
+                if (updatedReport == null)
+                {
+                    return NotFound(new { message = "Medical report not found" });
+                }
+
+                return Ok(updatedReport);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating medical report {ReportId}", reportId);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("medical-reports/{reportId}")]
+        public async Task<ActionResult<MedicalReportDto>> GetMedicalReportById(string reportId)
+        {
+            try
+            {
+                var medicalReport = await _doctorService.GetMedicalReportByIdAsync(reportId);
+                
+                if (medicalReport == null)
+                {
+                    return NotFound(new { message = "Medical report not found" });
+                }
+
+                return Ok(medicalReport);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving medical report {ReportId}", reportId);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("medical-reports/appointment/{appointmentId}")]
+        public async Task<ActionResult<MedicalReportDto>> GetMedicalReportByAppointmentId(string appointmentId)
+        {
+            try
+            {
+                var medicalReport = await _doctorService.GetMedicalReportByAppointmentIdAsync(appointmentId);
+                
+                if (medicalReport == null)
+                {
+                    return NotFound(new { message = "Medical report not found for this appointment" });
+                }
+
+                return Ok(medicalReport);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving medical report for appointment {AppointmentId}", appointmentId);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpGet("my-medical-reports")]
+        [Authorize(Roles = "Doctor")] // Only doctors can get their own medical reports
+        public async Task<ActionResult<List<MedicalReportDto>>> GetMyMedicalReports()
+        {
+            try
+            {
+                // Get the current doctor's user ID from the JWT token
+                var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(doctorUserId))
+                {
+                    return Unauthorized("Unable to identify user");
+                }
+
+                var medicalReports = await _doctorService.GetMyMedicalReportsAsync(doctorUserId);
+                return Ok(medicalReports);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while retrieving medical reports for current doctor");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
+        [HttpDelete("medical-reports/{reportId}")]
+        [Authorize(Roles = "Doctor")] // Only doctors can delete medical reports
+        public async Task<ActionResult> DeleteMedicalReport(string reportId)
+        {
+            try
+            {
+                // Get the current doctor's user ID from the JWT token
+                var doctorUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(doctorUserId))
+                {
+                    return Unauthorized("Unable to identify user");
+                }
+
+                var success = await _doctorService.DeleteMedicalReportAsync(reportId, doctorUserId);
+                
+                if (!success)
+                {
+                    return NotFound(new { message = "Medical report not found" });
+                }
+
+                return Ok(new { message = "Medical report deleted successfully" });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while deleting medical report {ReportId}", reportId);
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
     }
 }

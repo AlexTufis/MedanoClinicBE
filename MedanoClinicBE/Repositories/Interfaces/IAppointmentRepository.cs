@@ -15,5 +15,6 @@ namespace MedanoClinicBE.Repositories.Interfaces
         Task<List<AppointmentResponseDto>> GetAllAppointmentsAsync();
         Task<List<AppointmentResponseDto>> GetDoctorAppointmentsAsync(int doctorId);
         Task<int> UpdatePastAppointmentsStatusAsync();
+        Task<AppointmentResponseDto?> UpdateAppointmentStatusAsync(string appointmentId, UpdateAppointmentStatusDto dto);
     }
 }

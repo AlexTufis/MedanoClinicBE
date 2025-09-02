@@ -59,6 +59,35 @@ namespace MedanoClinicBE.Controllers
             }
         }
 
+        [HttpPut("appointments/{appointmentId}/status")]
+        public async Task<ActionResult<AppointmentResponseDto>> UpdateAppointmentStatus(string appointmentId, UpdateAppointmentStatusDto dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var updatedAppointment = await _adminService.UpdateAppointmentStatusAsync(appointmentId, dto);
+                
+                if (updatedAppointment == null)
+                {
+                    return NotFound(new { message = "Appointment not found" });
+                }
+
+                return Ok(updatedAppointment);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
+            }
+        }
+
         // Appointment Hours Management Endpoints
         [HttpGet("appointment-hours")]
         public async Task<ActionResult<List<DoctorAppointmentHoursDto>>> GetAllDoctorsAppointmentHours()

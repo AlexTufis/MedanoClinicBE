@@ -55,23 +55,26 @@ namespace MedanoClinicBE.Repositories
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
 
-            // Fetch the review with related data
+            // Fetch the review with related data including appointment
             var createdReview = await _context.Reviews
                 .Include(r => r.Client)
                 .Include(r => r.Doctor)
                 .ThenInclude(d => d.User)
+                .Include(r => r.Appointment) // Include appointment data
                 .FirstOrDefaultAsync(r => r.Id == review.Id);
 
             return new ReviewDto
             {
                 Id = createdReview.Id.ToString(),
                 DoctorId = createdReview.DoctorId.ToString(),
+                DoctorName = $"{createdReview.Doctor.User.FirstName} {createdReview.Doctor.User.LastName}",
                 ClientId = createdReview.ClientId,
                 ClientName = $"{createdReview.Client.FirstName} {createdReview.Client.LastName}",
                 Rating = createdReview.Rating,
                 Comment = createdReview.Comment,
                 CreatedAt = createdReview.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                AppointmentId = createdReview.AppointmentId.ToString()
+                AppointmentId = createdReview.AppointmentId.ToString(),
+                AppointmentDate = createdReview.Appointment.AppointmentDate.ToString("yyyy-MM-dd")
             };
         }
 
@@ -81,6 +84,7 @@ namespace MedanoClinicBE.Repositories
                 .Include(r => r.Client)
                 .Include(r => r.Doctor)
                 .ThenInclude(d => d.User)
+                .Include(r => r.Appointment) // Include appointment data
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
 
@@ -92,12 +96,14 @@ namespace MedanoClinicBE.Repositories
                 {
                     Id = review.Id.ToString(),
                     DoctorId = review.DoctorId.ToString(),
+                    DoctorName = $"{review.Doctor.User.FirstName} {review.Doctor.User.LastName}",
                     ClientId = review.ClientId,
                     ClientName = $"{review.Client.FirstName} {review.Client.LastName}",
                     Rating = review.Rating,
                     Comment = review.Comment,
                     CreatedAt = review.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    AppointmentId = review.AppointmentId.ToString()
+                    AppointmentId = review.AppointmentId.ToString(),
+                    AppointmentDate = review.Appointment.AppointmentDate.ToString("yyyy-MM-dd")
                 });
             }
 
@@ -110,6 +116,7 @@ namespace MedanoClinicBE.Repositories
                 .Include(r => r.Client)
                 .Include(r => r.Doctor)
                 .ThenInclude(d => d.User)
+                .Include(r => r.Appointment) // Include appointment data
                 .Where(r => r.DoctorId == doctorId)
                 .OrderByDescending(r => r.CreatedAt)
                 .ToListAsync();
@@ -122,12 +129,14 @@ namespace MedanoClinicBE.Repositories
                 {
                     Id = review.Id.ToString(),
                     DoctorId = review.DoctorId.ToString(),
+                    DoctorName = $"{review.Doctor.User.FirstName} {review.Doctor.User.LastName}",
                     ClientId = review.ClientId,
                     ClientName = $"{review.Client.FirstName} {review.Client.LastName}",
                     Rating = review.Rating,
                     Comment = review.Comment,
                     CreatedAt = review.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
-                    AppointmentId = review.AppointmentId.ToString()
+                    AppointmentId = review.AppointmentId.ToString(),
+                    AppointmentDate = review.Appointment.AppointmentDate.ToString("yyyy-MM-dd")
                 });
             }
 

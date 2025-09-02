@@ -14,6 +14,7 @@ namespace MedanoClinicBE.Services
         private readonly IReviewRepository _reviewRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IAppointmentHourRepository _appointmentHourRepository;
+        private readonly IMedicalReportRepository _medicalReportRepository;
         private readonly ILogger<DoctorService> _logger;
 
         public DoctorService(
@@ -23,6 +24,7 @@ namespace MedanoClinicBE.Services
             IReviewRepository reviewRepository,
             IAppointmentRepository appointmentRepository,
             IAppointmentHourRepository appointmentHourRepository,
+            IMedicalReportRepository medicalReportRepository,
             ILogger<DoctorService> logger)
         {
             _userManager = userManager;
@@ -31,6 +33,7 @@ namespace MedanoClinicBE.Services
             _reviewRepository = reviewRepository;
             _appointmentRepository = appointmentRepository;
             _appointmentHourRepository = appointmentHourRepository;
+            _medicalReportRepository = medicalReportRepository;
             _logger = logger;
         }
 
@@ -214,6 +217,88 @@ namespace MedanoClinicBE.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving appointments for doctor with UserId {UserId}", userId);
+                throw;
+            }
+        }
+
+        // Medical Report methods
+        public async Task<MedicalReportDto> CreateMedicalReportAsync(CreateMedicalReportDto dto, string doctorUserId)
+        {
+            try
+            {
+                return await _medicalReportRepository.CreateMedicalReportAsync(dto, doctorUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating medical report for appointment {AppointmentId} by doctor {DoctorUserId}", 
+                    dto.AppointmentId, doctorUserId);
+                throw;
+            }
+        }
+
+        public async Task<MedicalReportDto?> UpdateMedicalReportAsync(string reportId, UpdateMedicalReportDto dto, string doctorUserId)
+        {
+            try
+            {
+                return await _medicalReportRepository.UpdateMedicalReportAsync(reportId, dto, doctorUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating medical report {ReportId} by doctor {DoctorUserId}", 
+                    reportId, doctorUserId);
+                throw;
+            }
+        }
+
+        public async Task<MedicalReportDto?> GetMedicalReportByIdAsync(string reportId)
+        {
+            try
+            {
+                return await _medicalReportRepository.GetMedicalReportByIdAsync(reportId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving medical report {ReportId}", reportId);
+                throw;
+            }
+        }
+
+        public async Task<MedicalReportDto?> GetMedicalReportByAppointmentIdAsync(string appointmentId)
+        {
+            try
+            {
+                return await _medicalReportRepository.GetMedicalReportByAppointmentIdAsync(appointmentId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving medical report for appointment {AppointmentId}", appointmentId);
+                throw;
+            }
+        }
+
+        public async Task<List<MedicalReportDto>> GetMyMedicalReportsAsync(string doctorUserId)
+        {
+            try
+            {
+                return await _medicalReportRepository.GetMedicalReportsByDoctorAsync(doctorUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving medical reports for doctor {DoctorUserId}", doctorUserId);
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteMedicalReportAsync(string reportId, string doctorUserId)
+        {
+            try
+            {
+                return await _medicalReportRepository.DeleteMedicalReportAsync(reportId, doctorUserId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting medical report {ReportId} by doctor {DoctorUserId}", 
+                    reportId, doctorUserId);
                 throw;
             }
         }

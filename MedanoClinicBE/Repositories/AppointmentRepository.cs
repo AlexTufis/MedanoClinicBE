@@ -273,5 +273,79 @@ namespace MedanoClinicBE.Repositories
 
             return pastAppointments.Count;
         }
+
+        public async Task<AppointmentResponseDto?> UpdateAppointmentStatusAsync(string appointmentId, UpdateAppointmentStatusDto dto)
+        {
+            var id = int.Parse(appointmentId);
+            
+            // Find the appointment with related data
+            var appointment = await _context.Appointments
+                .Include(a => a.Patient)
+                .Include(a => a.Doctor)
+                .ThenInclude(d => d.User)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (appointment == null)
+            {
+                return null;
+            }
+
+            // Parse the status string to enum
+            var newStatus = dto.Status.ToLower() switch
+            {
+                "scheduled" => AppointmentStatus.Scheduled,
+                "completed" => AppointmentStatus.Completed,
+                "cancelled" => AppointmentStatus.Cancelled,
+                "no-show" => AppointmentStatus.NoShow,
+                "in-progress" => AppointmentStatus.InProgress,
+                _ => throw new ArgumentException($"Invalid status: {dto.Status}")
+            };
+
+            // Update the appointment
+            appointment.Status = newStatus;
+            
+            // Set CompletedAt timestamp if marking as completed
+            if (newStatus == AppointmentStatus.Completed && appointment.CompletedAt == null)
+            {
+                appointment.CompletedAt = DateTime.UtcNow;
+            }
+            
+            // Add admin notes to the existing notes if provided
+            if (!string.IsNullOrEmpty(dto.AdminNotes))
+            {
+                appointment.Notes = string.IsNullOrEmpty(appointment.Notes) 
+                    ? $"Admin: {dto.AdminNotes}" 
+                    : $"{appointment.Notes}\nAdmin: {dto.AdminNotes}";
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Convert status enum to lowercase string for response
+            var statusString = appointment.Status switch
+            {
+                AppointmentStatus.Scheduled => "scheduled",
+                AppointmentStatus.Completed => "completed",
+                AppointmentStatus.Cancelled => "cancelled",
+                AppointmentStatus.NoShow => "no-show",
+                AppointmentStatus.InProgress => "in-progress",
+                _ => "scheduled"
+            };
+
+            return new AppointmentResponseDto
+            {
+                Id = appointment.Id.ToString(),
+                ClientId = appointment.PatientId,
+                ClientName = $"{appointment.Patient.FirstName} {appointment.Patient.LastName}",
+                DoctorId = appointment.DoctorId.ToString(),
+                DoctorName = $"{appointment.Doctor.User.FirstName} {appointment.Doctor.User.LastName}",
+                DoctorSpecialization = appointment.Doctor.Specialization,
+                AppointmentDate = appointment.AppointmentDate.ToString("yyyy-MM-dd"),
+                AppointmentTime = appointment.AppointmentTime.ToString(@"hh\:mm"),
+                Status = statusString,
+                Reason = appointment.Reason,
+                Notes = appointment.Notes,
+                CreatedAt = appointment.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            };
+        }
     }
 }

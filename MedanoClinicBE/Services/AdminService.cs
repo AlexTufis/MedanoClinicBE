@@ -69,6 +69,12 @@ namespace MedanoClinicBE.Services
             return await _appointmentRepository.GetAllAppointmentsAsync();
         }
 
+        // Appointment Management
+        public async Task<AppointmentResponseDto?> UpdateAppointmentStatusAsync(string appointmentId, UpdateAppointmentStatusDto dto)
+        {
+            return await _appointmentRepository.UpdateAppointmentStatusAsync(appointmentId, dto);
+        }
+
         // Appointment Hours Management
         public async Task<AppointmentHourDto> CreateAppointmentHourAsync(CreateAppointmentHourDto dto)
         {

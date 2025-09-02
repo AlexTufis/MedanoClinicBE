@@ -1,4 +1,4 @@
-using MedanoClinicBE.DTOs;
+﻿using MedanoClinicBE.DTOs;
 using MedanoClinicBE.Models;
 using MedanoClinicBE.Services.Interfaces;
 using MedanoClinicBE.Settings;
@@ -142,7 +142,7 @@ namespace MedanoClinicBE.Services
             {
                 ToEmail = await GetPatientEmailAsync(appointment.ClientId),
                 ToName = appointment.ClientName,
-                Subject = "Appointment Confirmation - MedanoClinic",
+                Subject = "Confirmare Programare - MedanoClinic",
                 Type = NotificationType.AppointmentCreated,
                 AppointmentId = appointment.Id,
                 HtmlBody = GenerateAppointmentCreatedHtml(appointment),
@@ -158,7 +158,7 @@ namespace MedanoClinicBE.Services
             {
                 ToEmail = await GetPatientEmailAsync(appointment.ClientId),
                 ToName = appointment.ClientName,
-                Subject = "Appointment Updated - MedanoClinic",
+                Subject = "Programare Actualizată - MedanoClinic",
                 Type = NotificationType.AppointmentModified,
                 AppointmentId = appointment.Id,
                 HtmlBody = GenerateAppointmentModifiedHtml(appointment),
@@ -174,7 +174,7 @@ namespace MedanoClinicBE.Services
             {
                 ToEmail = await GetPatientEmailAsync(appointment.ClientId),
                 ToName = appointment.ClientName,
-                Subject = "Appointment Reminder - MedanoClinic",
+                Subject = "Memento Programare - MedanoClinic",
                 Type = NotificationType.AppointmentReminder,
                 AppointmentId = appointment.Id,
                 HtmlBody = GenerateAppointmentReminderHtml(appointment),
@@ -190,7 +190,7 @@ namespace MedanoClinicBE.Services
             {
                 ToEmail = await GetPatientEmailAsync(appointment.ClientId),
                 ToName = appointment.ClientName,
-                Subject = "Appointment Cancelled - MedanoClinic",
+                Subject = "Programare Anulată - MedanoClinic",
                 Type = NotificationType.AppointmentCancelled,
                 AppointmentId = appointment.Id,
                 HtmlBody = GenerateAppointmentCancelledHtml(appointment),
@@ -234,26 +234,26 @@ namespace MedanoClinicBE.Services
         {
             var sb = new StringBuilder();
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Appointment Confirmation</title></head>");
+            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Confirmare Programare</title></head>");
             sb.AppendLine("<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
             sb.AppendLine("<div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">");
-            sb.AppendLine("<h2 style=\"color: #2c5aa0;\">Appointment Confirmed</h2>");
-            sb.AppendLine($"<p>Dear {appointment.ClientName},</p>");
-            sb.AppendLine("<p>Your appointment has been successfully scheduled. Here are the details:</p>");
+            sb.AppendLine("<h2 style=\"color: #2c5aa0;\">Programare Confirmată</h2>");
+            sb.AppendLine($"<p>Stimate/Stimată {appointment.ClientName},</p>");
+            sb.AppendLine("<p>Programarea dumneavoastră a fost programată cu succes. Iată detaliile:</p>");
             sb.AppendLine("<div style=\"background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;\">");
             sb.AppendLine($"<p><strong>Doctor:</strong> {appointment.DoctorName} ({appointment.DoctorSpecialization})</p>");
-            sb.AppendLine($"<p><strong>Date:</strong> {appointment.AppointmentDate}</p>");
-            sb.AppendLine($"<p><strong>Time:</strong> {appointment.AppointmentTime}</p>");
-            sb.AppendLine($"<p><strong>Reason:</strong> {appointment.Reason}</p>");
+            sb.AppendLine($"<p><strong>Data:</strong> {appointment.AppointmentDate}</p>");
+            sb.AppendLine($"<p><strong>Ora:</strong> {appointment.AppointmentTime}</p>");
+            sb.AppendLine($"<p><strong>Motivul:</strong> {appointment.Reason}</p>");
             if (!string.IsNullOrEmpty(appointment.Notes))
             {
-                sb.AppendLine($"<p><strong>Notes:</strong> {appointment.Notes}</p>");
+                sb.AppendLine($"<p><strong>Note:</strong> {appointment.Notes}</p>");
             }
             sb.AppendLine("</div>");
-            sb.AppendLine("<p>Please arrive 15 minutes before your appointment time.</p>");
-            sb.AppendLine("<p>Thank you for choosing MedanoClinic!</p>");
+            sb.AppendLine("<p>Vă rugăm să ajungeți cu 15 minute înainte de ora programării.</p>");
+            sb.AppendLine("<p>Vă mulțumim că ați ales MedanoClinic!</p>");
             sb.AppendLine("<hr style=\"margin: 30px 0;\">");
-            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Your Health, Our Priority</p>");
+            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră</p>");
             sb.AppendLine("</div></body></html>");
             return sb.ToString();
         }
@@ -261,26 +261,26 @@ namespace MedanoClinicBE.Services
         private string GenerateAppointmentCreatedPlainText(AppointmentResponseDto appointment)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("APPOINTMENT CONFIRMED");
-            sb.AppendLine("===================");
-            sb.AppendLine($"Dear {appointment.ClientName},");
+            sb.AppendLine("PROGRAMARE CONFIRMATĂ");
+            sb.AppendLine("====================");
+            sb.AppendLine($"Stimate/Stimată {appointment.ClientName},");
             sb.AppendLine();
-            sb.AppendLine("Your appointment has been successfully scheduled. Here are the details:");
+            sb.AppendLine("Programarea dumneavoastră a fost programată cu succes. Iată detaliile:");
             sb.AppendLine();
             sb.AppendLine($"Doctor: {appointment.DoctorName} ({appointment.DoctorSpecialization})");
-            sb.AppendLine($"Date: {appointment.AppointmentDate}");
-            sb.AppendLine($"Time: {appointment.AppointmentTime}");
-            sb.AppendLine($"Reason: {appointment.Reason}");
+            sb.AppendLine($"Data: {appointment.AppointmentDate}");
+            sb.AppendLine($"Ora: {appointment.AppointmentTime}");
+            sb.AppendLine($"Motivul: {appointment.Reason}");
             if (!string.IsNullOrEmpty(appointment.Notes))
             {
-                sb.AppendLine($"Notes: {appointment.Notes}");
+                sb.AppendLine($"Note: {appointment.Notes}");
             }
             sb.AppendLine();
-            sb.AppendLine("Please arrive 15 minutes before your appointment time.");
+            sb.AppendLine("Vă rugăm să ajungeți cu 15 minute înainte de ora programării.");
             sb.AppendLine();
-            sb.AppendLine("Thank you for choosing MedanoClinic!");
+            sb.AppendLine("Vă mulțumim că ați ales MedanoClinic!");
             sb.AppendLine();
-            sb.AppendLine("MedanoClinic - Your Health, Our Priority");
+            sb.AppendLine("MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră");
             return sb.ToString();
         }
 
@@ -288,26 +288,26 @@ namespace MedanoClinicBE.Services
         {
             var sb = new StringBuilder();
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Appointment Updated</title></head>");
+            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Programare Actualizată</title></head>");
             sb.AppendLine("<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
             sb.AppendLine("<div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">");
-            sb.AppendLine("<h2 style=\"color: #f39c12;\">Appointment Updated</h2>");
-            sb.AppendLine($"<p>Dear {appointment.ClientName},</p>");
-            sb.AppendLine("<p>Your appointment has been updated. Here are the current details:</p>");
+            sb.AppendLine("<h2 style=\"color: #f39c12;\">Programare Actualizată</h2>");
+            sb.AppendLine($"<p>Stimate/Stimată {appointment.ClientName},</p>");
+            sb.AppendLine("<p>Programarea dumneavoastră a fost actualizată. Iată detaliile actuale:</p>");
             sb.AppendLine("<div style=\"background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #f39c12;\">");
             sb.AppendLine($"<p><strong>Doctor:</strong> {appointment.DoctorName} ({appointment.DoctorSpecialization})</p>");
-            sb.AppendLine($"<p><strong>Date:</strong> {appointment.AppointmentDate}</p>");
-            sb.AppendLine($"<p><strong>Time:</strong> {appointment.AppointmentTime}</p>");
-            sb.AppendLine($"<p><strong>Reason:</strong> {appointment.Reason}</p>");
+            sb.AppendLine($"<p><strong>Data:</strong> {appointment.AppointmentDate}</p>");
+            sb.AppendLine($"<p><strong>Ora:</strong> {appointment.AppointmentTime}</p>");
+            sb.AppendLine($"<p><strong>Motivul:</strong> {appointment.Reason}</p>");
             if (!string.IsNullOrEmpty(appointment.Notes))
             {
-                sb.AppendLine($"<p><strong>Notes:</strong> {appointment.Notes}</p>");
+                sb.AppendLine($"<p><strong>Note:</strong> {appointment.Notes}</p>");
             }
             sb.AppendLine("</div>");
-            sb.AppendLine("<p>Please make note of these changes and arrive 15 minutes before your appointment time.</p>");
-            sb.AppendLine("<p>Thank you for choosing MedanoClinic!</p>");
+            sb.AppendLine("<p>Vă rugăm să rețineți aceste modificări și să ajungeți cu 15 minute înainte de ora programării.</p>");
+            sb.AppendLine("<p>Vă mulțumim că ați ales MedanoClinic!</p>");
             sb.AppendLine("<hr style=\"margin: 30px 0;\">");
-            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Your Health, Our Priority</p>");
+            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră</p>");
             sb.AppendLine("</div></body></html>");
             return sb.ToString();
         }
@@ -315,26 +315,26 @@ namespace MedanoClinicBE.Services
         private string GenerateAppointmentModifiedPlainText(AppointmentResponseDto appointment)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("APPOINTMENT UPDATED");
-            sb.AppendLine("==================");
-            sb.AppendLine($"Dear {appointment.ClientName},");
+            sb.AppendLine("PROGRAMARE ACTUALIZATĂ");
+            sb.AppendLine("======================");
+            sb.AppendLine($"Stimate/Stimată {appointment.ClientName}, ");
             sb.AppendLine();
-            sb.AppendLine("Your appointment has been updated. Here are the current details:");
+            sb.AppendLine("Programarea dumneavoastră a fost actualizată. Iată detaliile actuale:");
             sb.AppendLine();
             sb.AppendLine($"Doctor: {appointment.DoctorName} ({appointment.DoctorSpecialization})");
-            sb.AppendLine($"Date: {appointment.AppointmentDate}");
-            sb.AppendLine($"Time: {appointment.AppointmentTime}");
-            sb.AppendLine($"Reason: {appointment.Reason}");
+            sb.AppendLine($"Data: {appointment.AppointmentDate}");
+            sb.AppendLine($"Ora: {appointment.AppointmentTime}");
+            sb.AppendLine($"Motivul: {appointment.Reason}");
             if (!string.IsNullOrEmpty(appointment.Notes))
             {
-                sb.AppendLine($"Notes: {appointment.Notes}");
+                sb.AppendLine($"Note: {appointment.Notes}");
             }
             sb.AppendLine();
-            sb.AppendLine("Please make note of these changes and arrive 15 minutes before your appointment time.");
+            sb.AppendLine("Vă rugăm să rețineți aceste modificări și să ajungeți cu 15 minute înainte de ora programării.");
             sb.AppendLine();
-            sb.AppendLine("Thank you for choosing MedanoClinic!");
+            sb.AppendLine("Vă mulțumim că ați ales MedanoClinic!");
             sb.AppendLine();
-            sb.AppendLine("MedanoClinic - Your Health, Our Priority");
+            sb.AppendLine("MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră");
             return sb.ToString();
         }
 
@@ -342,27 +342,27 @@ namespace MedanoClinicBE.Services
         {
             var sb = new StringBuilder();
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Appointment Reminder</title></head>");
+            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Memento Programare</title></head>");
             sb.AppendLine("<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
             sb.AppendLine("<div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">");
-            sb.AppendLine("<h2 style=\"color: #17a2b8;\">Appointment Reminder</h2>");
-            sb.AppendLine($"<p>Dear {appointment.ClientName},</p>");
-            sb.AppendLine("<p>This is a friendly reminder that you have an appointment in 1 hour:</p>");
+            sb.AppendLine("<h2 style=\"color: #17a2b8;\">Memento Programare</h2>");
+            sb.AppendLine($"<p>Stimate/Stimată {appointment.ClientName},</p>");
+            sb.AppendLine("<p>Aceasta este o amintire prietenoasă că aveți o programare în 1 oră:</p>");
             sb.AppendLine("<div style=\"background-color: #d1ecf1; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #17a2b8;\">");
             sb.AppendLine($"<p><strong>Doctor:</strong> {appointment.DoctorName} ({appointment.DoctorSpecialization})</p>");
-            sb.AppendLine($"<p><strong>Date:</strong> {appointment.AppointmentDate}</p>");
-            sb.AppendLine($"<p><strong>Time:</strong> {appointment.AppointmentTime}</p>");
-            sb.AppendLine($"<p><strong>Reason:</strong> {appointment.Reason}</p>");
+            sb.AppendLine($"<p><strong>Data:</strong> {appointment.AppointmentDate}</p>");
+            sb.AppendLine($"<p><strong>Ora:</strong> {appointment.AppointmentTime}</p>");
+            sb.AppendLine($"<p><strong>Motivul:</strong> {appointment.Reason}</p>");
             sb.AppendLine("</div>");
-            sb.AppendLine("<p><strong>Please remember to:</strong></p>");
+            sb.AppendLine("<p><strong>Vă rugăm să vă amintiți să:</strong></p>");
             sb.AppendLine("<ul>");
-            sb.AppendLine("<li>Arrive 15 minutes early</li>");
-            sb.AppendLine("<li>Bring your ID and insurance card</li>");
-            sb.AppendLine("<li>Bring any relevant medical documents</li>");
+            sb.AppendLine("<li>Ajungeți cu 15 minute mai devreme</li>");
+            sb.AppendLine("<li>Aduceți actul de identitate și cardul de asigurări</li>");
+            sb.AppendLine("<li>Aduceți documentele medicale relevante</li>");
             sb.AppendLine("</ul>");
-            sb.AppendLine("<p>Thank you for choosing MedanoClinic!</p>");
+            sb.AppendLine("<p>Vă mulțumim că ați ales MedanoClinic!</p>");
             sb.AppendLine("<hr style=\"margin: 30px 0;\">");
-            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Your Health, Our Priority</p>");
+            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră</p>");
             sb.AppendLine("</div></body></html>");
             return sb.ToString();
         }
@@ -370,25 +370,25 @@ namespace MedanoClinicBE.Services
         private string GenerateAppointmentReminderPlainText(AppointmentResponseDto appointment)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("APPOINTMENT REMINDER");
-            sb.AppendLine("===================");
-            sb.AppendLine($"Dear {appointment.ClientName},");
+            sb.AppendLine("MEMENTO PROGRAMARE");
+            sb.AppendLine("==================");
+            sb.AppendLine($"Stimate/Stimată {appointment.ClientName},");
             sb.AppendLine();
-            sb.AppendLine("This is a friendly reminder that you have an appointment in 1 hour:");
+            sb.AppendLine("Aceasta este o amintire prietenoasă că aveți o programare în 1 oră:");
             sb.AppendLine();
             sb.AppendLine($"Doctor: {appointment.DoctorName} ({appointment.DoctorSpecialization})");
-            sb.AppendLine($"Date: {appointment.AppointmentDate}");
-            sb.AppendLine($"Time: {appointment.AppointmentTime}");
-            sb.AppendLine($"Reason: {appointment.Reason}");
+            sb.AppendLine($"Data: {appointment.AppointmentDate}");
+            sb.AppendLine($"Ora: {appointment.AppointmentTime}");
+            sb.AppendLine($"Motivul: {appointment.Reason}");
             sb.AppendLine();
-            sb.AppendLine("Please remember to:");
-            sb.AppendLine("- Arrive 15 minutes early");
-            sb.AppendLine("- Bring your ID and insurance card");
-            sb.AppendLine("- Bring any relevant medical documents");
+            sb.AppendLine("Vă rugăm să vă amintiți să:");
+            sb.AppendLine("- Ajungeți cu 15 minute mai devreme");
+            sb.AppendLine("- Aduceți actul de identitate și cardul de asigurări");
+            sb.AppendLine("- Aduceți documentele medicale relevante");
             sb.AppendLine();
-            sb.AppendLine("Thank you for choosing MedanoClinic!");
+            sb.AppendLine("Vă mulțumim că ați ales MedanoClinic!");
             sb.AppendLine();
-            sb.AppendLine("MedanoClinic - Your Health, Our Priority");
+            sb.AppendLine("MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră");
             return sb.ToString();
         }
 
@@ -396,23 +396,23 @@ namespace MedanoClinicBE.Services
         {
             var sb = new StringBuilder();
             sb.AppendLine("<!DOCTYPE html>");
-            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Appointment Cancelled</title></head>");
+            sb.AppendLine("<html><head><meta charset=\"UTF-8\"><title>Programare Anulată</title></head>");
             sb.AppendLine("<body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
             sb.AppendLine("<div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">");
-            sb.AppendLine("<h2 style=\"color: #dc3545;\">Appointment Cancelled</h2>");
-            sb.AppendLine($"<p>Dear {appointment.ClientName},</p>");
-            sb.AppendLine("<p>We regret to inform you that your appointment has been cancelled:</p>");
+            sb.AppendLine("<h2 style=\"color: #dc3545;\">Programare Anulată</h2>");
+            sb.AppendLine($"<p>Stimate/Stimată {appointment.ClientName},</p>");
+            sb.AppendLine("<p>Regretăm să vă informăm că programarea dumneavoastră a fost anulată:</p>");
             sb.AppendLine("<div style=\"background-color: #f8d7da; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #dc3545;\">");
             sb.AppendLine($"<p><strong>Doctor:</strong> {appointment.DoctorName} ({appointment.DoctorSpecialization})</p>");
-            sb.AppendLine($"<p><strong>Original Date:</strong> {appointment.AppointmentDate}</p>");
-            sb.AppendLine($"<p><strong>Original Time:</strong> {appointment.AppointmentTime}</p>");
-            sb.AppendLine($"<p><strong>Reason:</strong> {appointment.Reason}</p>");
+            sb.AppendLine($"<p><strong>Data inițială:</strong> {appointment.AppointmentDate}</p>");
+            sb.AppendLine($"<p><strong>Ora inițială:</strong> {appointment.AppointmentTime}</p>");
+            sb.AppendLine($"<p><strong>Motivul:</strong> {appointment.Reason}</p>");
             sb.AppendLine("</div>");
-            sb.AppendLine("<p>Please contact us to reschedule your appointment at your convenience.</p>");
-            sb.AppendLine("<p>We apologize for any inconvenience caused.</p>");
-            sb.AppendLine("<p>Thank you for your understanding.</p>");
+            sb.AppendLine("<p>Vă rugăm să ne contactați pentru a reprograma consultația la o oră convenabilă pentru dumneavoastră.</p>");
+            sb.AppendLine("<p>Ne cerem scuze pentru orice neplăcere cauzată.</p>");
+            sb.AppendLine("<p>Vă mulțumim pentru înțelegere.</p>");
             sb.AppendLine("<hr style=\"margin: 30px 0;\">");
-            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Your Health, Our Priority</p>");
+            sb.AppendLine("<p style=\"font-size: 12px; color: #666;\">MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră</p>");
             sb.AppendLine("</div></body></html>");
             return sb.ToString();
         }
@@ -420,24 +420,24 @@ namespace MedanoClinicBE.Services
         private string GenerateAppointmentCancelledPlainText(AppointmentResponseDto appointment)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("APPOINTMENT CANCELLED");
-            sb.AppendLine("====================");
-            sb.AppendLine($"Dear {appointment.ClientName},");
+            sb.AppendLine("PROGRAMARE ANULATĂ");
+            sb.AppendLine("==================");
+            sb.AppendLine($"Stimate/Stimată {appointment.ClientName},");
             sb.AppendLine();
-            sb.AppendLine("We regret to inform you that your appointment has been cancelled:");
+            sb.AppendLine("Regretăm să vă informăm că programarea dumneavoastră a fost anulată:");
             sb.AppendLine();
             sb.AppendLine($"Doctor: {appointment.DoctorName} ({appointment.DoctorSpecialization})");
-            sb.AppendLine($"Original Date: {appointment.AppointmentDate}");
-            sb.AppendLine($"Original Time: {appointment.AppointmentTime}");
-            sb.AppendLine($"Reason: {appointment.Reason}");
+            sb.AppendLine($"Data inițială: {appointment.AppointmentDate}");
+            sb.AppendLine($"Ora inițială: {appointment.AppointmentTime}");
+            sb.AppendLine($"Motivul: {appointment.Reason}");
             sb.AppendLine();
-            sb.AppendLine("Please contact us to reschedule your appointment at your convenience.");
+            sb.AppendLine("Vă rugăm să ne contactați pentru a reprograma consultația la o oră convenabilă pentru dumneavoastră.");
             sb.AppendLine();
-            sb.AppendLine("We apologize for any inconvenience caused.");
+            sb.AppendLine("Ne cerem scuze pentru orice neplăcere cauzată.");
             sb.AppendLine();
-            sb.AppendLine("Thank you for your understanding.");
+            sb.AppendLine("Vă mulțumim pentru înțelegere.");
             sb.AppendLine();
-            sb.AppendLine("MedanoClinic - Your Health, Our Priority");
+            sb.AppendLine("MedanoClinic - Sănătatea dumneavoastră, prioritatea noastră");
             return sb.ToString();
         }
     }
